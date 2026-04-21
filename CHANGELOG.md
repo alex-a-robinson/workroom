@@ -2,6 +2,20 @@
 
 All notable changes to the `workroom` plugin. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows SemVer.
 
+## [0.4.1] — 2026-04-21
+
+Patch release: the v0.4.0 MCP wrapper never started because of an unbound-var crash. This fixes it.
+
+### Fixed
+
+- **`plugin/mcp/workroom-fs.sh`** used `set -eu` and referenced `${CLAUDE_PLUGIN_DATA}` directly — Cowork doesn't always pass that env var to plugin-spawned MCPs, so the wrapper exited with "unbound variable" before ever invoking `npx`. The dashboard showed "MCP isn't running" because the server never started. Wrapper now uses `:-` defaults, falls back to `$HOME/.workroom` for config and `$HOME/Documents/Claude/Projects/Workroom` for the served root, creates the root if it doesn't exist, and logs its resolved path to stderr.
+- **`plugin/mcp/set-workroom-root.sh`** had the same `${CLAUDE_PLUGIN_DATA}` assumption and would fail the onboarding step. Matched to the same fallback pattern; also escapes JSON for paths containing backslashes or quotes.
+
+### Notes
+
+- Cowork may need a full app restart (not just a new chat) for a fresh plugin's stdio MCP to appear in the tool list — confirmed from plugin manifest docs that MCPs spawn at session init.
+- End-to-end verified: MCP handshake returns the expected `tools/list` including `directory_tree`, `read_text_file`, `list_directory`, `list_allowed_directories`.
+
 ## [0.4.0] — 2026-04-21
 
 First "real" Workroom release. Four dedicated artefacts, a live filesystem MCP, a three-step onboarding, curated starter routines, and a brand style doc pulled from useworkroom.com. No mock data in the dashboard — it reads real files.
