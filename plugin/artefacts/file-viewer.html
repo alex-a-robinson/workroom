@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Knowledge Base</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+  color: #0f172a; background: #fafaf9; line-height: 1.5; font-size: 15px;
+}
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: #fff; border-bottom: 1px solid #e7e5e4;
+  position: sticky; top: 0; z-index: 10; gap: 12px; flex-wrap: wrap;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.topbar-inputs { display: flex; gap: 8px; flex: 1; min-width: 200px; align-items: center; }
+.topbar-inputs input {
+  flex: 1; min-width: 120px; padding: 6px 10px; border: 1px solid #e7e5e4; border-radius: 6px;
+  font-size: 13px; font-family: inherit; background: #fff;
+}
+.topbar-inputs button {
+  padding: 6px 12px; background: #0f172a; color: #fff; border: none; border-radius: 6px;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: background 120ms;
+}
+.topbar-inputs button:hover { background: #1e293b; }
+.help-btn {
+  background: transparent; border: 1px solid #e7e5e4; color: #475569;
+  padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer;
+  transition: all 120ms;
+}
+.help-btn:hover { border-color: #0d9488; color: #0d9488; }
+
+.container { display: flex; height: calc(100vh - 48px); }
+
+.sidebar {
+  width: 240px; border-right: 1px solid #e7e5e4; background: #fafaf9;
+  overflow-y: auto; padding: 8px 0; flex-shrink: 0;
+}
+
+.tree { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+.tree-item { margin: 0; }
+.tree-label {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+  cursor: pointer; user-select: none; transition: all 120ms;
+  color: #475569;
+}
+.tree-label:hover { background: #f1f5f9; color: #0f172a; }
+.tree-label.active { background: #f0fdfa; color: #0d9488; font-weight: 500; }
+.tree-toggle {
+  width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: #94a3b8; font-size: 12px; transition: transform 120ms;
+}
+.tree-toggle.open { transform: rotate(90deg); }
+.tree-toggle.hidden { visibility: hidden; }
+.tree-children { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 200ms ease; }
+.tree-item.open > .tree-children { max-height: 9999px; }
+
+.content {
+  flex: 1; display: flex; flex-direction: column; background: #fff;
+  overflow: hidden;
+}
+
+.content-scroll { flex: 1; overflow-y: auto; padding: 0; }
+.markdown {
+  padding: 32px 40px; max-width: 720px; margin: 0 auto;
+}
+.markdown h1 { font-size: 28px; margin: 0 0 12px; font-weight: 600; letter-spacing: -0.02em; }
+.markdown h2 { font-size: 20px; margin: 24px 0 12px; font-weight: 600; letter-spacing: -0.01em; }
+.markdown h3 { font-size: 16px; margin: 18px 0 10px; font-weight: 600; }
+.markdown h4, .markdown h5, .markdown h6 { font-size: 14px; margin: 14px 0 8px; font-weight: 600; }
+.markdown p { margin: 0 0 14px; line-height: 1.6; }
+.markdown ul, .markdown ol { margin: 0 0 14px 20px; padding: 0; }
+.markdown li { margin: 4px 0; }
+.markdown code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: "Monaco", monospace; font-size: 13px; color: #334155; }
+.markdown pre {
+  background: #f8fafc; border: 1px solid #e7e5e4; border-radius: 8px;
+  padding: 12px 14px; margin: 0 0 14px; overflow-x: auto; font-size: 12px;
+}
+.markdown pre code { background: none; padding: 0; }
+.markdown blockquote { border-left: 3px solid #0d9488; padding-left: 14px; color: #475569; margin: 0 0 14px; }
+.markdown a { color: #0d9488; text-decoration: none; }
+.markdown a:hover { text-decoration: underline; }
+.markdown table { border-collapse: collapse; width: 100%; margin: 0 0 14px; }
+.markdown th, .markdown td { border: 1px solid #e7e5e4; padding: 8px 12px; text-align: left; }
+.markdown th { background: #f8fafc; font-weight: 600; }
+
+.empty-state, .error-state {
+  padding: 32px 40px; text-align: center; color: #64748b;
+}
+.empty-state h2, .error-state h2 { font-size: 18px; margin: 0 0 8px; color: #475569; }
+
+.help-panel {
+  display: none; position: absolute; top: 48px; right: 16px; z-index: 20;
+  background: #fff; border: 1px solid #e7e5e4; border-radius: 8px;
+  padding: 16px; max-width: 280px; box-shadow: 0 4px 12px rgba(15,23,42,0.1);
+}
+.help-panel.shown { display: block; }
+.help-panel h3 { font-size: 13px; margin: 0 0 8px; color: #0f172a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.help-panel p { font-size: 12px; margin: 0 0 10px; line-height: 1.5; color: #475569; }
+.help-panel p:last-child { margin-bottom: 0; }
+.help-panel code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-size: 11px; }
+
+.fallback-inputs {
+  display: none; padding: 12px; border: 1px solid #fca5a5; background: #fef2f2;
+  border-radius: 6px; margin-top: 6px; font-size: 12px; gap: 8px; flex-direction: column;
+}
+.fallback-inputs.shown { display: flex; }
+.fallback-inputs label { font-weight: 500; color: #b91c1c; }
+.fallback-inputs textarea {
+  width: 100%; min-height: 60px; padding: 8px; border: 1px solid #fecaca; border-radius: 4px;
+  font-family: monospace; font-size: 11px; resize: vertical; background: #fff;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span style="font-weight: 600; font-size: 15px;">Knowledge Base</span>
+  </div>
+  <div class="topbar-inputs">
+    <input type="text" id="pathInput" placeholder="Workspace directory:" value="__DEFAULT_WORKSPACE__">
+    <button id="loadBtn">Load</button>
+  </div>
+  <button class="help-btn" id="helpBtn">?</button>
+</div>
+
+<div class="help-panel" id="helpPanel">
+  <h3>Fallback Format</h3>
+  <p>If the filesystem MCP isn't connected, ask Claude to run:</p>
+  <p><code>find &lt;path&gt; -type f -o -type d | sort | jq -R -s 'split("\n")[:-1]'</code></p>
+  <p>Paste the JSON array, then paste individual file contents when needed.</p>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <ul class="tree" id="tree"></ul>
+  </div>
+  <div class="content">
+    <div class="content-scroll" id="contentScroll">
+      <div class="empty-state">
+        <h2>No file loaded</h2>
+        <p>Enter a workspace path and click Load to browse.</p>
+        <div class="fallback-inputs" id="fallbackInputs">
+          <label>Paste file tree JSON:</label>
+          <textarea id="treeJson" placeholder='["path/to/file.md", "path/to/folder/"]'></textarea>
+          <button id="loadTreeBtn" style="align-self: flex-start; padding: 6px 12px; background: #0f172a; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">Load Tree</button>
+          <label style="margin-top: 10px;">Paste file contents:</label>
+          <textarea id="fileContent" placeholder="# Markdown content or file text"></textarea>
+          <button id="loadContentBtn" style="align-self: flex-start; padding: 6px 12px; background: #0f172a; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">Load Content</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let fileTree = {};
+let currentFile = null;
+
+document.getElementById('helpBtn').addEventListener('click', () => {
+  document.getElementById('helpPanel').classList.toggle('shown');
+});
+
+document.getElementById('loadBtn').addEventListener('click', loadWorkspace);
+document.getElementById('loadTreeBtn').addEventListener('click', loadTreeFromJson);
+document.getElementById('loadContentBtn').addEventListener('click', loadContentFromJson);
+
+async function loadWorkspace() {
+  const path = document.getElementById('pathInput').value.trim();
+  if (!path) {
+    showError('Please enter a workspace path');
+    return;
+  }
+
+  try {
+    const result = await window.cowork.callMcpTool('list_files', { path });
+    if (result && result.isError) {
+      showFallback();
+      return;
+    }
+    buildTreeFromMcp(result);
+  } catch (e) {
+    showFallback();
+  }
+}
+
+function showFallback() {
+  const fallback = document.getElementById('fallbackInputs');
+  fallback.classList.add('shown');
+  showError('Filesystem MCP not connected — use the JSON fallback below');
+}
+
+function loadTreeFromJson() {
+  const jsonStr = document.getElementById('treeJson').value.trim();
+  if (!jsonStr) return;
+  try {
+    const paths = JSON.parse(jsonStr);
+    buildTreeFromPaths(paths);
+  } catch (e) {
+    showError('Invalid JSON: ' + e.message);
+  }
+}
+
+function loadContentFromJson() {
+  const content = document.getElementById('fileContent').value;
+  if (!content) return;
+  renderMarkdown(content);
+}
+
+function buildTreeFromMcp(result) {
+  const paths = result.content ? JSON.parse(result.content) : result;
+  buildTreeFromPaths(Array.isArray(paths) ? paths : Object.keys(paths));
+}
+
+function buildTreeFromPaths(paths) {
+  fileTree = {};
+  paths.forEach(p => {
+    const parts = p.split('/').filter(Boolean);
+    let node = fileTree;
+    parts.forEach((part, i) => {
+      if (!node[part]) node[part] = {};
+      node = node[part];
+      if (i === parts.length - 1) node.__file = true;
+    });
+  });
+  renderTree();
+}
+
+function renderTree() {
+  const treeEl = document.getElementById('tree');
+  treeEl.innerHTML = '';
+  Object.keys(fileTree).sort().forEach(key => {
+    treeEl.appendChild(createTreeNode(key, fileTree[key], ''));
+  });
+}
+
+function createTreeNode(name, node, path) {
+  const li = document.createElement('li');
+  li.className = 'tree-item';
+
+  const fullPath = path ? path + '/' + name : name;
+  const isFile = node.__file;
+  const children = Object.keys(node).filter(k => k !== '__file');
+  const hasChildren = children.length > 0;
+
+  const label = document.createElement('div');
+  label.className = 'tree-label';
+  if (!isFile) label.style.fontWeight = '500';
+
+  const toggle = document.createElement('span');
+  toggle.className = 'tree-toggle' + (hasChildren ? '' : ' hidden');
+  toggle.textContent = '›';
+
+  const nameSpan = document.createElement('span');
+  nameSpan.textContent = name + (isFile ? '' : '/');
+
+  label.appendChild(toggle);
+  label.appendChild(nameSpan);
+
+  li.appendChild(label);
+
+  if (hasChildren) {
+    const childList = document.createElement('ul');
+    childList.className = 'tree-children';
+    children.sort().forEach(childName => {
+      childList.appendChild(createTreeNode(childName, node[childName], fullPath));
+    });
+    li.appendChild(childList);
+
+    label.addEventListener('click', (e) => {
+      e.stopPropagation();
+      li.classList.toggle('open');
+      toggle.classList.toggle('open');
+    });
+  } else {
+    label.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!fullPath.endsWith('.md')) {
+        showError('Only .md files can be previewed');
+        return;
+      }
+      document.querySelectorAll('.tree-label').forEach(l => l.classList.remove('active'));
+      label.classList.add('active');
+      currentFile = fullPath;
+      await loadFile(fullPath);
+    });
+  }
+
+  return li;
+}
+
+async function loadFile(path) {
+  try {
+    const result = await window.cowork.callMcpTool('read_file', { path });
+    if (result && result.isError) {
+      showFallback();
+      return;
+    }
+    const content = result.content || result;
+    renderMarkdown(content);
+  } catch (e) {
+    showFallback();
+  }
+}
+
+function renderMarkdown(content) {
+  const html = marked.parse(content);
+  document.getElementById('contentScroll').innerHTML = '<div class="markdown">' + html + '</div>';
+}
+
+function showError(msg) {
+  document.getElementById('contentScroll').innerHTML = '<div class="error-state"><h2>Error</h2><p>' + msg + '</p></div>';
+}
+</script>
+
+<!-- v1 limitations: no wiki-linking, no backlinks, no syntax highlighting, no real-time sync.
+     A Workroom filesystem MCP would unlock: direct tree enumeration without JSON fallback,
+     efficient binary diff for large files, watch API for live updates, and integrated search. -->
+
+</body>
+</html>

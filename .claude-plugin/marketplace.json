@@ -1,18 +1,19 @@
 {
-  "name": "workroom-monitor-test",
+  "name": "workroom",
   "owner": {
-    "name": "Workroom"
+    "name": "Workroom",
+    "url": "https://workroom.com"
   },
   "metadata": {
-    "description": "Single-plugin marketplace: a probe that validates whether Cowork's plugin monitors actually deliver stdout lines to Claude as chat notifications."
+    "description": "Workroom — the master plugin. Ships guided onboarding, a knowledge-base file viewer, the Pip framework, a starter workspace scaffold, and placeholder hooks. See README."
   },
   "plugins": [
     {
-      "name": "workroom-monitor-test",
+      "name": "workroom",
       "source": "./plugin",
-      "description": "Minimal probe: heartbeat every 60s + signal-watch on a log file. Includes a monitor-status skill for diagnosis.",
-      "version": "0.2.0",
-      "category": "probe"
+      "description": "Workroom master plugin — onboarding artefact, file viewer, Pip framework, starter templates, hooks.",
+      "version": "0.3.0",
+      "category": "workspace"
     }
   ]
 }

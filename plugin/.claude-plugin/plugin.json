@@ -1,8 +1,10 @@
 {
-  "name": "workroom-monitor-test",
-  "version": "0.2.0",
-  "description": "Minimal probe: validates that plugin monitors deliver stdout lines to Claude as chat notifications. Part of the Workroom platform-capability probes. Ships with a monitor-status skill for in-session diagnosis.",
+  "name": "workroom",
+  "version": "0.3.0",
+  "description": "Workroom — the master plugin. Ships the onboarding artefact, an Obsidian-style knowledge-base file viewer, the Pip framework, a starter workspace scaffold, and placeholder hooks for git-sync and Pip safety. Invoke workroom-help to see what's inside.",
   "author": {
-    "name": "Workroom"
-  }
+    "name": "Workroom",
+    "url": "https://workroom.com"
+  },
+  "homepage": "https://github.com/alex-a-robinson/workroom"
 }

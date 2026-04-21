@@ -1,3 +1,0 @@
-# Placeholder so the signals/ directory exists at install time. The
-# signal-watch monitor creates signal.log on start; this file just keeps
-# the directory in git.
