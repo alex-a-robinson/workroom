@@ -1,16 +1,12 @@
 ---
 name: workroom-file-viewer
-description: Browse your knowledge base. View folders, click to read markdown files. Obsidian-style Workroom markdown browser. Open file viewer, show me the Workroom files, browse my notes.
+description: Open the Workroom dashboard — a live markdown browser over your knowledge base, backed by the workroom-fs MCP.
 ---
 
 # Workroom File Viewer
 
-Ask the user which directory they want to browse. Default: the current working directory or the Workroom folder they set up.
+Check that the user has set up their workspace via the `workroom-onboarding` skill. If not, direct them to run onboarding first and do not open the artefact.
 
-Read the HTML from `${CLAUDE_PLUGIN_ROOT}/artefacts/file-viewer.html`.
+If they have set up their workspace, call `mcp__cowork__create_artifact` with the HTML from `${CLAUDE_PLUGIN_ROOT}/artefacts/dashboard.html`, title "Workroom Dashboard".
 
-Find the placeholder token `__DEFAULT_WORKSPACE__` in the HTML (it's in the input field's `value=` attribute) and replace it with the user's chosen directory path (string literal, quoted in the HTML).
-
-Call `mcp__cowork__create_artifact` with the modified HTML, title "Knowledge base".
-
-Tell the user: "If the filesystem MCP isn't connected, the viewer's JSON fallback will work. Ask me to list a folder or read a file and I'll give you JSON to paste in."
+The dashboard loads your file tree from the workroom-fs MCP and renders markdown files live in the browser. If the MCP is not available, it shows a fallback empty state with setup instructions.

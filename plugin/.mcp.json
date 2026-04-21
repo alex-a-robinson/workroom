@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "workroom-fs": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/mcp/workroom-fs.sh"
+    }
+  }
+}

@@ -2,17 +2,17 @@
   "name": "workroom",
   "owner": {
     "name": "Workroom",
-    "url": "https://workroom.com"
+    "url": "https://useworkroom.com"
   },
   "metadata": {
-    "description": "Workroom — the master plugin. Ships guided onboarding, a knowledge-base file viewer, the Pip framework, a starter workspace scaffold, and placeholder hooks. See README."
+    "description": "Workroom — the master plugin. Ships guided three-step onboarding, a live MCP-backed knowledge-base dashboard, education + admin artefacts, the Pip coaching framework, starter templates, and a bundled filesystem MCP."
   },
   "plugins": [
     {
       "name": "workroom",
       "source": "./plugin",
-      "description": "Workroom master plugin — onboarding artefact, file viewer, Pip framework, starter templates, hooks.",
-      "version": "0.3.0",
+      "description": "Workroom master plugin — onboarding, dashboard, education, admin, Pip, starter templates, filesystem MCP.",
+      "version": "0.4.0",
       "category": "workspace"
     }
   ]

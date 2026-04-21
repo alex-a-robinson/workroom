@@ -1,0 +1,655 @@
+{
+  "version": "0.1",
+  "updated": "2026-04-21",
+  "roles": {
+    "founder": {
+      "label": "Founder / Executive",
+      "description": "Leaders running companies and consulting engagements. Focus on visibility, strategy, team coordination.",
+      "routineIds": [
+        "founder-inbox-triage",
+        "founder-client-status",
+        "founder-weekly-review",
+        "founder-meeting-prep",
+        "founder-decision-log",
+        "founder-board-prep",
+        "founder-pipeline-summary"
+      ]
+    },
+    "sales": {
+      "label": "Sales",
+      "description": "Sales professionals managing pipelines, accounts, and deals. Focus on opportunity acceleration.",
+      "routineIds": [
+        "sales-pipeline-review",
+        "sales-meeting-prep",
+        "sales-prospecting-sequence",
+        "sales-follow-up-draft",
+        "sales-crm-enrichment",
+        "sales-deal-summary",
+        "sales-competitor-brief",
+        "sales-call-transcript-summary"
+      ]
+    },
+    "cs": {
+      "label": "Customer Success",
+      "description": "Account managers and success leads. Focus on retention, expansion, and health tracking.",
+      "routineIds": [
+        "cs-weekly-health-check",
+        "cs-qbr-prep",
+        "cs-escalation-draft",
+        "cs-churn-risk-flag",
+        "cs-expansion-opportunities",
+        "cs-onboarding-checklist",
+        "cs-customer-update",
+        "cs-renewal-timeline"
+      ]
+    },
+    "ops": {
+      "label": "Operations",
+      "description": "Operations and program managers. Focus on process, reporting, and cross-functional coordination.",
+      "routineIds": [
+        "ops-weekly-report",
+        "ops-meeting-notes",
+        "ops-process-draft",
+        "ops-expense-categorization",
+        "ops-vendor-comms",
+        "ops-board-prep",
+        "ops-project-status",
+        "ops-recruiting-brief"
+      ]
+    },
+    "marketing": {
+      "label": "Marketing",
+      "description": "Marketing and growth professionals. Focus on content, messaging, and performance.",
+      "routineIds": [
+        "marketing-content-brief",
+        "marketing-campaign-retro",
+        "marketing-performance-summary",
+        "marketing-competitive-scan",
+        "marketing-social-calendar",
+        "marketing-email-draft",
+        "marketing-messaging-refresh",
+        "marketing-webinar-prep"
+      ]
+    },
+    "engineering": {
+      "label": "Engineering / Technical",
+      "description": "Engineers and tech leads. Focus on code review, documentation, and incident response.",
+      "routineIds": [
+        "eng-pr-review-prep",
+        "eng-standup-summary",
+        "eng-incident-timeline",
+        "eng-doc-generation",
+        "eng-architecture-draft",
+        "eng-test-coverage-report",
+        "eng-tech-debt-assessment",
+        "eng-onboarding-guide"
+      ]
+    },
+    "support": {
+      "label": "Support",
+      "description": "Support and customer service teams. Focus on ticket triage, patterns, and escalation.",
+      "routineIds": [
+        "support-ticket-triage",
+        "support-kb-draft",
+        "support-pattern-analysis",
+        "support-escalation-brief",
+        "support-customer-response",
+        "support-sla-report",
+        "support-faq-update",
+        "support-onboarding-qa"
+      ]
+    }
+  },
+  "routines": [
+    {
+      "id": "founder-inbox-triage",
+      "title": "Morning inbox triage",
+      "description": "Categorize overnight email by urgency, draft replies to obvious ones, surface anything needing decision.",
+      "role": "founder",
+      "requires": ["email"],
+      "cadence": "daily",
+      "estimatedMinutes": 15,
+      "tier": "starter"
+    },
+    {
+      "id": "founder-client-status",
+      "title": "Status update for all active client projects",
+      "description": "Pull last week's work, draft brief status updates for each consulting engagement, note blockers.",
+      "role": "founder",
+      "requires": ["email", "calendar", "issue-tracker"],
+      "cadence": "weekly",
+      "estimatedMinutes": 20,
+      "tier": "starter"
+    },
+    {
+      "id": "founder-weekly-review",
+      "title": "Weekly review and planning",
+      "description": "Summarize the week across all projects, flag what didn't get done, draft next week's priorities.",
+      "role": "founder",
+      "requires": ["calendar", "issue-tracker"],
+      "cadence": "weekly",
+      "estimatedMinutes": 25,
+      "tier": "standard"
+    },
+    {
+      "id": "founder-meeting-prep",
+      "title": "Pre-meeting context pull",
+      "description": "Gather attendee info, recent emails, calendar history, and draft talking points before key meetings.",
+      "role": "founder",
+      "requires": ["email", "calendar"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 10,
+      "tier": "starter"
+    },
+    {
+      "id": "founder-decision-log",
+      "title": "Capture decisions from the week",
+      "description": "Pull email and meeting notes, extract decisions made, who owns follow-up, archive in decision log.",
+      "role": "founder",
+      "requires": ["email", "calendar"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "founder-board-prep",
+      "title": "Board/investor update draft",
+      "description": "Compile metrics, wins, and challenges into a structured board update template with narrative.",
+      "role": "founder",
+      "requires": ["accounting", "crm", "issue-tracker"],
+      "cadence": "monthly",
+      "estimatedMinutes": 30,
+      "tier": "standard"
+    },
+    {
+      "id": "founder-pipeline-summary",
+      "title": "All-deals pipeline snapshot",
+      "description": "Extract current CRM state across all clients and opportunities, highlight movement and risk.",
+      "role": "founder",
+      "requires": ["crm"],
+      "cadence": "weekly",
+      "estimatedMinutes": 10,
+      "tier": "advanced"
+    },
+    {
+      "id": "sales-pipeline-review",
+      "title": "Weekly pipeline review",
+      "description": "Pull all open deals, flag stalled ones, identify who needs a push, draft next-step actions.",
+      "role": "sales",
+      "requires": ["crm"],
+      "cadence": "weekly",
+      "estimatedMinutes": 20,
+      "tier": "starter"
+    },
+    {
+      "id": "sales-meeting-prep",
+      "title": "Prospect/account meeting prep",
+      "description": "Gather CRM history, email threads, mutual connections, and draft agenda or talking points.",
+      "role": "sales",
+      "requires": ["crm", "email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 10,
+      "tier": "starter"
+    },
+    {
+      "id": "sales-prospecting-sequence",
+      "title": "Draft prospecting sequence",
+      "description": "From a list of targets, draft personalized outreach emails and follow-up cadence.",
+      "role": "sales",
+      "requires": ["crm", "email"],
+      "cadence": "weekly",
+      "estimatedMinutes": 25,
+      "tier": "standard"
+    },
+    {
+      "id": "sales-follow-up-draft",
+      "title": "Automatic follow-up drafts",
+      "description": "For deals without activity in N days, draft natural follow-up emails ready to send.",
+      "role": "sales",
+      "requires": ["crm", "email"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "sales-crm-enrichment",
+      "title": "Enrich prospect data",
+      "description": "Fill in missing CRM fields (company size, funding, decision-maker titles) from email and web research.",
+      "role": "sales",
+      "requires": ["crm"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 10,
+      "tier": "advanced"
+    },
+    {
+      "id": "sales-deal-summary",
+      "title": "Deal summary for CRM update",
+      "description": "From recent email threads and calls, draft CRM update notes with latest context and next step.",
+      "role": "sales",
+      "requires": ["crm", "email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 8,
+      "tier": "standard"
+    },
+    {
+      "id": "sales-competitor-brief",
+      "title": "Competitive brief on prospect's tech",
+      "description": "Research prospect's current tools and competitors, draft positioning angles for pitch.",
+      "role": "sales",
+      "requires": ["crm"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 12,
+      "tier": "advanced"
+    },
+    {
+      "id": "sales-call-transcript-summary",
+      "title": "Summarize call transcript",
+      "description": "Extract objections, commitments, and action items from call transcript or notes.",
+      "role": "sales",
+      "requires": ["email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 8,
+      "tier": "standard"
+    },
+    {
+      "id": "cs-weekly-health-check",
+      "title": "Weekly account health summary",
+      "description": "Pull usage, support tickets, and sentiment, flag at-risk accounts and expansion opportunities.",
+      "role": "cs",
+      "requires": ["crm", "helpdesk"],
+      "cadence": "weekly",
+      "estimatedMinutes": 20,
+      "tier": "starter"
+    },
+    {
+      "id": "cs-qbr-prep",
+      "title": "QBR preparation",
+      "description": "Compile usage metrics, ROI, wins, and upsell opportunities into a structured QBR deck outline.",
+      "role": "cs",
+      "requires": ["crm", "helpdesk", "accounting"],
+      "cadence": "quarterly",
+      "estimatedMinutes": 30,
+      "tier": "standard"
+    },
+    {
+      "id": "cs-escalation-draft",
+      "title": "Draft escalation summary",
+      "description": "Summarize customer issue, impact, and recommended action for escalation to engineering or leadership.",
+      "role": "cs",
+      "requires": ["helpdesk", "email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 10,
+      "tier": "starter"
+    },
+    {
+      "id": "cs-churn-risk-flag",
+      "title": "Identify churn-risk signals",
+      "description": "Analyze helpdesk tickets and email for signals of dissatisfaction, flag at-risk accounts.",
+      "role": "cs",
+      "requires": ["helpdesk", "crm", "email"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "advanced"
+    },
+    {
+      "id": "cs-expansion-opportunities",
+      "title": "Identify expansion targets",
+      "description": "From usage and feature adoption, identify high-value customers ready for upsell or land-and-expand.",
+      "role": "cs",
+      "requires": ["crm", "helpdesk"],
+      "cadence": "monthly",
+      "estimatedMinutes": 20,
+      "tier": "advanced"
+    },
+    {
+      "id": "cs-onboarding-checklist",
+      "title": "Generate onboarding checklist",
+      "description": "Create tailored onboarding plan for new customer based on product edition and use case.",
+      "role": "cs",
+      "requires": ["crm", "kb"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "cs-customer-update",
+      "title": "Draft customer product update",
+      "description": "Summarize recent feature releases or roadmap changes in customer-friendly language.",
+      "role": "cs",
+      "requires": ["email"],
+      "cadence": "monthly",
+      "estimatedMinutes": 10,
+      "tier": "standard"
+    },
+    {
+      "id": "cs-renewal-timeline",
+      "title": "Renewal timeline and action plan",
+      "description": "Flag upcoming renewals, assess health, draft win-back or expansion strategy for each.",
+      "role": "cs",
+      "requires": ["crm", "accounting"],
+      "cadence": "monthly",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "ops-weekly-report",
+      "title": "Weekly operational report",
+      "description": "Compile metrics from tools, summarize cross-functional status, highlight blockers and decisions needed.",
+      "role": "ops",
+      "requires": ["crm", "accounting", "calendar"],
+      "cadence": "weekly",
+      "estimatedMinutes": 25,
+      "tier": "starter"
+    },
+    {
+      "id": "ops-meeting-notes",
+      "title": "Organize meeting notes and action items",
+      "description": "Extract decisions and owners from meeting transcript, format for team distribution.",
+      "role": "ops",
+      "requires": ["email", "calendar"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 10,
+      "tier": "starter"
+    },
+    {
+      "id": "ops-process-draft",
+      "title": "Document a process",
+      "description": "From existing workflow or email threads, draft a step-by-step process doc with decision trees.",
+      "role": "ops",
+      "requires": ["email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 20,
+      "tier": "standard"
+    },
+    {
+      "id": "ops-expense-categorization",
+      "title": "Categorize expenses and flag anomalies",
+      "description": "Classify new expenses, check for budget alignment, flag unusual spend for review.",
+      "role": "ops",
+      "requires": ["accounting"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "starter"
+    },
+    {
+      "id": "ops-vendor-comms",
+      "title": "Draft vendor or partner communication",
+      "description": "From requirements or feedback, draft professional email or RFP for vendor engagement.",
+      "role": "ops",
+      "requires": ["email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 12,
+      "tier": "standard"
+    },
+    {
+      "id": "ops-board-prep",
+      "title": "Collect board package materials",
+      "description": "Gather KPIs, deck drafts, and narrative updates for board and investor meetings.",
+      "role": "ops",
+      "requires": ["crm", "accounting", "calendar"],
+      "cadence": "monthly",
+      "estimatedMinutes": 30,
+      "tier": "standard"
+    },
+    {
+      "id": "ops-project-status",
+      "title": "Cross-functional project status",
+      "description": "Pull updates from all team trackers, compile unified project health and timeline view.",
+      "role": "ops",
+      "requires": ["issue-tracker", "email"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "advanced"
+    },
+    {
+      "id": "ops-recruiting-brief",
+      "title": "Recruiting brief for open role",
+      "description": "Summarize role responsibilities, team context, and required skills into hiring brief.",
+      "role": "ops",
+      "requires": ["email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "marketing-content-brief",
+      "title": "Draft content brief",
+      "description": "From product feature or event, create structured content brief with outline, talking points, and assets.",
+      "role": "marketing",
+      "requires": ["email"],
+      "cadence": "weekly",
+      "estimatedMinutes": 20,
+      "tier": "starter"
+    },
+    {
+      "id": "marketing-campaign-retro",
+      "title": "Campaign retrospective and learnings",
+      "description": "Analyze campaign performance data, extract what worked, what didn't, and recommended next steps.",
+      "role": "marketing",
+      "requires": ["email", "accounting"],
+      "cadence": "monthly",
+      "estimatedMinutes": 20,
+      "tier": "standard"
+    },
+    {
+      "id": "marketing-performance-summary",
+      "title": "Monthly performance summary",
+      "description": "Compile website, campaign, and social metrics, highlight trends and recommend optimizations.",
+      "role": "marketing",
+      "requires": ["accounting"],
+      "cadence": "monthly",
+      "estimatedMinutes": 25,
+      "tier": "standard"
+    },
+    {
+      "id": "marketing-competitive-scan",
+      "title": "Competitive messaging scan",
+      "description": "Research competitor websites and messaging, identify positioning gaps and opportunities.",
+      "role": "marketing",
+      "requires": [],
+      "cadence": "monthly",
+      "estimatedMinutes": 15,
+      "tier": "advanced"
+    },
+    {
+      "id": "marketing-social-calendar",
+      "title": "Draft social media calendar",
+      "description": "Plan month of social posts with themes, assets, and posting schedule.",
+      "role": "marketing",
+      "requires": ["email"],
+      "cadence": "monthly",
+      "estimatedMinutes": 20,
+      "tier": "standard"
+    },
+    {
+      "id": "marketing-email-draft",
+      "title": "Draft email campaign copy",
+      "description": "From campaign brief, draft email subject lines, body copy, and CTA variants.",
+      "role": "marketing",
+      "requires": ["email"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "starter"
+    },
+    {
+      "id": "marketing-messaging-refresh",
+      "title": "Refresh product messaging",
+      "description": "Update value props, positioning, and differentiators based on latest product changes or market feedback.",
+      "role": "marketing",
+      "requires": ["email"],
+      "cadence": "quarterly",
+      "estimatedMinutes": 25,
+      "tier": "advanced"
+    },
+    {
+      "id": "marketing-webinar-prep",
+      "title": "Webinar prep: slides and talking points",
+      "description": "Draft webinar outline, slides structure, and speaker notes for upcoming session.",
+      "role": "marketing",
+      "requires": ["email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 25,
+      "tier": "standard"
+    },
+    {
+      "id": "eng-pr-review-prep",
+      "title": "PR review preparation",
+      "description": "Summarize PR context, extract what changed, and draft review comments focusing on critical areas.",
+      "role": "engineering",
+      "requires": ["code-host"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 15,
+      "tier": "starter"
+    },
+    {
+      "id": "eng-standup-summary",
+      "title": "Generate standup summary",
+      "description": "Pull recent commits and PRs, draft standup update with progress and blockers.",
+      "role": "engineering",
+      "requires": ["code-host", "issue-tracker"],
+      "cadence": "daily",
+      "estimatedMinutes": 8,
+      "tier": "starter"
+    },
+    {
+      "id": "eng-incident-timeline",
+      "title": "Build incident timeline",
+      "description": "From Slack or email, reconstruct what happened, when, and why in incident post-mortem format.",
+      "role": "engineering",
+      "requires": ["messaging", "email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "eng-doc-generation",
+      "title": "Generate API or architecture doc",
+      "description": "From code, extract structure and generate markdown doc with overview, endpoints, and examples.",
+      "role": "engineering",
+      "requires": ["code-host"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 20,
+      "tier": "advanced"
+    },
+    {
+      "id": "eng-architecture-draft",
+      "title": "Draft architecture decision doc",
+      "description": "From PR or discussion, formalize architecture decision with problem, options, and rationale.",
+      "role": "engineering",
+      "requires": ["code-host"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 20,
+      "tier": "advanced"
+    },
+    {
+      "id": "eng-test-coverage-report",
+      "title": "Test coverage analysis",
+      "description": "Review test metrics, identify coverage gaps, flag areas needing test investment.",
+      "role": "engineering",
+      "requires": ["code-host"],
+      "cadence": "weekly",
+      "estimatedMinutes": 10,
+      "tier": "advanced"
+    },
+    {
+      "id": "eng-tech-debt-assessment",
+      "title": "Tech debt inventory and prioritization",
+      "description": "From issue tracker and code, catalog tech debt, estimate effort, recommend priority order.",
+      "role": "engineering",
+      "requires": ["code-host", "issue-tracker"],
+      "cadence": "monthly",
+      "estimatedMinutes": 25,
+      "tier": "advanced"
+    },
+    {
+      "id": "eng-onboarding-guide",
+      "title": "New engineer onboarding guide",
+      "description": "Draft setup instructions, repo overview, and troubleshooting guide for new team members.",
+      "role": "engineering",
+      "requires": ["code-host"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 25,
+      "tier": "standard"
+    },
+    {
+      "id": "support-ticket-triage",
+      "title": "Daily ticket triage",
+      "description": "Review new tickets, categorize by severity, assign priority, route to right owner.",
+      "role": "support",
+      "requires": ["helpdesk"],
+      "cadence": "daily",
+      "estimatedMinutes": 15,
+      "tier": "starter"
+    },
+    {
+      "id": "support-kb-draft",
+      "title": "Draft KB article from ticket",
+      "description": "From resolved ticket, create self-service article to prevent repeat questions.",
+      "role": "support",
+      "requires": ["helpdesk", "kb"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "starter"
+    },
+    {
+      "id": "support-pattern-analysis",
+      "title": "Identify support patterns",
+      "description": "Analyze tickets from past week, flag recurring issues and themes for product/engineering.",
+      "role": "support",
+      "requires": ["helpdesk"],
+      "cadence": "weekly",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "support-escalation-brief",
+      "title": "Escalation summary for engineering",
+      "description": "Summarize customer issue, reproduction steps, and business impact for bug escalation.",
+      "role": "support",
+      "requires": ["helpdesk", "email"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 10,
+      "tier": "starter"
+    },
+    {
+      "id": "support-customer-response",
+      "title": "Draft customer-facing response",
+      "description": "From ticket context, draft empathetic, clear response with next steps.",
+      "role": "support",
+      "requires": ["helpdesk"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 8,
+      "tier": "starter"
+    },
+    {
+      "id": "support-sla-report",
+      "title": "Weekly SLA compliance report",
+      "description": "Track response and resolution times, flag SLA misses and team capacity issues.",
+      "role": "support",
+      "requires": ["helpdesk"],
+      "cadence": "weekly",
+      "estimatedMinutes": 12,
+      "tier": "standard"
+    },
+    {
+      "id": "support-faq-update",
+      "title": "Update FAQ from tickets",
+      "description": "Extract top new questions from tickets, update FAQ with clear answers.",
+      "role": "support",
+      "requires": ["helpdesk", "kb"],
+      "cadence": "monthly",
+      "estimatedMinutes": 15,
+      "tier": "standard"
+    },
+    {
+      "id": "support-onboarding-qa",
+      "title": "Onboarding QA checklist",
+      "description": "Generate customer onboarding checklist based on product and use case.",
+      "role": "support",
+      "requires": ["kb"],
+      "cadence": "adhoc",
+      "estimatedMinutes": 12,
+      "tier": "standard"
+    }
+  ]
+}

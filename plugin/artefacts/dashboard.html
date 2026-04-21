@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workroom Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --ink: #F5F1EA;
+      --ink-dim: #A8A29A;
+      --ink-faint: #5F5B54;
+      --ink-whisper: #2A2825;
+      --ground: #0A0A0A;
+      --ground-raised: #131211;
+      --ground-sunken: #060605;
+      --accent: #E8623D;
+      --accent-ink: #0A0A0A;
+      --accent-glow: rgba(232, 98, 61, 0.18);
+      --accent-dim: #A84426;
+      --ok: #7EA876;
+      --warn: #D4A24E;
+      --bad: #B8554A;
+      --f-display: "Instrument Serif", "Times New Roman", serif;
+      --f-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --f-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --radius-sm: 4px;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --border: 1px solid var(--ink-whisper);
+      --gutter: 32px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ground);
+      color: var(--ink);
+      font-family: var(--f-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      font-feature-settings: "ss01", "ss02", "cv01";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 var(--gutter);
+      background: var(--ground-raised);
+      border-bottom: var(--border);
+      flex-shrink: 0;
+      gap: 16px;
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      color: var(--ink-dim);
+      letter-spacing: 0.06em;
+    }
+
+    .topbar-logo-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: auto;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      background: transparent;
+      color: var(--ink-dim);
+      border: 1px solid var(--ink-whisper);
+      border-radius: var(--radius);
+      font-family: var(--f-sans);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 160ms var(--ease-out);
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      color: var(--ink);
+      border-color: var(--ink-faint);
+      background: var(--ground-raised);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -10px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .preview-pill {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      padding: 6px 10px;
+      background: var(--ground-sunken);
+      color: var(--ink-dim);
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      border-right: var(--border);
+      background: var(--ground);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 16px 0;
+    }
+
+    .sidebar-header {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+      padding: 0 16px 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: var(--border);
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+    }
+
+    .tree {
+      list-style: none;
+      font-size: 14px;
+    }
+
+    .tree-item {
+      margin: 0;
+    }
+
+    .tree-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 160ms var(--ease-out);
+      color: var(--ink-dim);
+    }
+
+    .tree-label:hover {
+      color: var(--ink);
+      background: var(--ground-raised);
+    }
+
+    .tree-label.active {
+      color: var(--accent);
+      background: var(--ground-raised);
+      font-weight: 500;
+    }
+
+    .tree-toggle {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--ink-faint);
+      font-size: 12px;
+      transition: transform 160ms var(--ease-out);
+      font-family: var(--f-sans);
+    }
+
+    .tree-toggle.open {
+      transform: rotate(90deg);
+    }
+
+    .tree-toggle.hidden {
+      visibility: hidden;
+    }
+
+    .tree-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tree-ext {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+
+    .tree-children {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 160ms var(--ease-out);
+    }
+
+    .tree-item.open > .tree-children {
+      max-height: 9999px;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--ground);
+    }
+
+    .content-header {
+      flex-shrink: 0;
+      padding: 12px var(--gutter);
+      border-bottom: var(--border);
+      background: var(--ground-raised);
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    .markdown {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px var(--gutter) 64px;
+    }
+
+    .markdown h1 {
+      font-family: var(--f-display);
+      font-size: 42px;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 0 0 24px;
+      color: var(--ink);
+    }
+
+    .markdown h2 {
+      font-family: var(--f-display);
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      margin: 40px 0 16px;
+      color: var(--ink);
+    }
+
+    .markdown h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--ink);
+    }
+
+    .markdown h4, .markdown h5, .markdown h6 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 16px 0 10px;
+      color: var(--ink);
+    }
+
+    .markdown p {
+      margin: 0 0 16px;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    .markdown ul, .markdown ol {
+      margin: 0 0 16px 20px;
+      padding: 0;
+    }
+
+    .markdown li {
+      margin: 6px 0;
+      color: var(--ink);
+    }
+
+    .markdown code {
+      background: var(--ground-sunken);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-family: var(--f-mono);
+      font-size: 13px;
+      color: var(--ink-dim);
+    }
+
+    .markdown pre {
+      background: var(--ground-raised);
+      border: var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 0 0 16px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+
+    .markdown pre code {
+      background: none;
+      padding: 0;
+      color: var(--ink-dim);
+    }
+
+    .markdown blockquote {
+      border-left: 2px solid var(--accent);
+      padding-left: 16px;
+      color: var(--ink-dim);
+      margin: 0 0 16px;
+      font-style: italic;
+    }
+
+    .markdown a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 160ms var(--ease-out);
+    }
+
+    .markdown a:hover {
+      color: var(--accent-dim);
+      text-decoration: underline;
+    }
+
+    .markdown table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0 0 16px;
+      font-size: 14px;
+    }
+
+    .markdown th, .markdown td {
+      border: var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .markdown th {
+      background: var(--ground-raised);
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .markdown td {
+      color: var(--ink-dim);
+    }
+
+    .empty-state {
+      padding: 64px 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .empty-headline {
+      font-family: var(--f-display);
+      font-size: 38px;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+      color: var(--ink);
+      max-width: 48ch;
+    }
+
+    .empty-subline {
+      font-size: 16px;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    .error-banner {
+      background: var(--ground-raised);
+      border: 1px solid var(--bad);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin: 12px 16px 0;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .error-banner-title {
+      font-weight: 600;
+      color: var(--bad);
+      margin-bottom: 6px;
+    }
+
+    .error-banner code {
+      background: var(--ground-sunken);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        padding: 0 16px;
+      }
+      .sidebar {
+        width: 0;
+        position: absolute;
+        left: -280px;
+        z-index: 100;
+        height: calc(100vh - 56px);
+        border-right: var(--border);
+        transition: left 200ms var(--ease-out);
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .container {
+        position: relative;
+      }
+      .markdown {
+        padding: 32px 16px 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-logo-dot"></div>
+    <span>Workroom</span>
+    <span id="version-slug" style="color: var(--ink-faint);">v0.4.0</span>
+  </div>
+  <div class="topbar-right">
+    <button class="btn" id="refresh-btn" title="Refresh directory tree">Refresh</button>
+    <button class="btn" id="theme-btn" title="Toggle theme">Light</button>
+    <div id="preview-pill" class="preview-pill" style="display: none;">Preview mode</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">Workspace</div>
+    <ul class="tree" id="tree"></ul>
+  </div>
+  <div class="content">
+    <div class="content-header" id="breadcrumb" style="display: none;"></div>
+    <div class="content-scroll" id="content-scroll">
+      <div class="empty-state">
+        <div class="empty-headline">Build your knowledge base</div>
+        <div class="empty-subline">Pick a file to start reading</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  isDarkMode: true,
+  mcpAvailable: typeof window.cowork !== 'undefined' && window.cowork.callMcpTool,
+};
+
+let currentPath = null;
+let treeData = null;
+let loadedOnce = false;
+
+async function initDashboard() {
+  setupEventListeners();
+
+  if (CONFIG.mcpAvailable) {
+    await loadTreeFromMcp();
+  } else {
+    showPreviewMode();
+    loadDemoData();
+  }
+}
+
+function setupEventListeners() {
+  document.getElementById('refresh-btn').addEventListener('click', () => {
+    if (CONFIG.mcpAvailable) {
+      loadTreeFromMcp();
+    }
+  });
+
+  document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+}
+
+function toggleTheme() {
+  CONFIG.isDarkMode = !CONFIG.isDarkMode;
+  const theme = CONFIG.isDarkMode ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-btn').textContent = CONFIG.isDarkMode ? 'Light' : 'Dark';
+}
+
+function showPreviewMode() {
+  document.getElementById('preview-pill').style.display = 'flex';
+}
+
+async function loadTreeFromMcp() {
+  const contentScroll = document.getElementById('content-scroll');
+
+  try {
+    const res = await window.cowork.callMcpTool('mcp__workroom-fs__directory_tree', {
+      path: '/',
+      excludePatterns: ['.git', 'node_modules', '__pycache__', '.DS_Store', '.venv']
+    });
+
+    if (res.isError) {
+      showConnectionError();
+      return;
+    }
+
+    let tree;
+    if (res.structuredContent) {
+      tree = res.structuredContent;
+    } else if (res.content && res.content[0]?.text) {
+      tree = JSON.parse(res.content[0].text);
+    } else {
+      throw new Error('Unexpected MCP response shape');
+    }
+
+    treeData = tree;
+    renderTreeFromData(tree);
+    loadedOnce = true;
+  } catch (err) {
+    console.error('MCP error:', err);
+    showConnectionError();
+  }
+}
+
+function showConnectionError() {
+  const contentScroll = document.getElementById('content-scroll');
+  contentScroll.innerHTML = `
+    <div style="padding: 32px;">
+      <div class="error-banner">
+        <div class="error-banner-title">Workspace not connected</div>
+        <div style="margin-top: 8px; font-size: 13px; line-height: 1.5;">
+          The workroom-fs MCP is not available.
+          <br>Run the <code>workroom-onboarding</code> skill first to set your workspace directory.
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function loadDemoData() {
+  treeData = [
+    { name: 'README.md', type: 'file' },
+    { name: 'overview.md', type: 'file' },
+    { name: 'log.md', type: 'file' },
+    {
+      name: 'concepts',
+      type: 'directory',
+      children: [
+        { name: '01-guided-onboarding.md', type: 'file' },
+        { name: '02-artefact-chat-workflow.md', type: 'file' },
+        { name: '03-pip.md', type: 'file' }
+      ]
+    },
+    {
+      name: 'technical',
+      type: 'directory',
+      children: [
+        { name: 'glossary.md', type: 'file' },
+        { name: 'capabilities-and-constraints.md', type: 'file' }
+      ]
+    }
+  ];
+  renderTreeFromData(treeData);
+  loadedOnce = true;
+}
+
+function renderTreeFromData(nodes, parentPath = '') {
+  const treeEl = document.getElementById('tree');
+  if (parentPath === '') {
+    treeEl.innerHTML = '';
+  }
+
+  if (!nodes) return;
+
+  nodes.forEach(node => {
+    const li = createTreeNode(node, parentPath);
+    if (parentPath === '') {
+      treeEl.appendChild(li);
+    }
+  });
+}
+
+function createTreeNode(node, parentPath = '') {
+  const li = document.createElement('li');
+  li.className = 'tree-item';
+
+  const fullPath = parentPath ? `${parentPath}/${node.name}` : node.name;
+  const isFile = node.type === 'file';
+  const hasChildren = node.children && node.children.length > 0;
+
+  const label = document.createElement('div');
+  label.className = 'tree-label';
+
+  const toggle = document.createElement('div');
+  toggle.className = isFile ? 'tree-toggle hidden' : 'tree-toggle';
+  toggle.textContent = '›';
+
+  const nameSpan = document.createElement('div');
+  nameSpan.className = 'tree-name';
+  nameSpan.textContent = node.name;
+
+  const ext = document.createElement('div');
+  ext.className = 'tree-ext';
+  if (isFile && node.name.includes('.')) {
+    const parts = node.name.split('.');
+    ext.textContent = parts[parts.length - 1];
+  }
+
+  label.appendChild(toggle);
+  label.appendChild(nameSpan);
+  if (ext.textContent) {
+    label.appendChild(ext);
+  }
+
+  li.appendChild(label);
+
+  if (hasChildren) {
+    const childList = document.createElement('ul');
+    childList.className = 'tree-children';
+
+    node.children.forEach(child => {
+      childList.appendChild(createTreeNode(child, fullPath));
+    });
+
+    li.appendChild(childList);
+
+    label.addEventListener('click', (e) => {
+      e.stopPropagation();
+      li.classList.toggle('open');
+      toggle.classList.toggle('open');
+    });
+  } else if (isFile) {
+    label.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.tree-label').forEach(l => l.classList.remove('active'));
+      label.classList.add('active');
+      currentPath = fullPath;
+      await loadFile(fullPath);
+    });
+  }
+
+  return li;
+}
+
+async function loadFile(filePath) {
+  const contentScroll = document.getElementById('content-scroll');
+  const breadcrumb = document.getElementById('breadcrumb');
+
+  if (!filePath.endsWith('.md')) {
+    contentScroll.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-headline">Text files only</div>
+        <div class="empty-subline">Currently viewing markdown (.md) files</div>
+      </div>
+    `;
+    breadcrumb.style.display = 'none';
+    return;
+  }
+
+  breadcrumb.textContent = filePath;
+  breadcrumb.style.display = 'block';
+
+  if (!CONFIG.mcpAvailable) {
+    contentScroll.innerHTML = `
+      <div style="padding: 32px;">
+        <div class="error-banner">
+          <div class="error-banner-title">Preview mode</div>
+          <div style="margin-top: 8px;">In preview mode, use the onboarding skill to set up your workspace.</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  try {
+    const res = await window.cowork.callMcpTool('mcp__workroom-fs__read_text_file', {
+      path: `/${filePath}`
+    });
+
+    if (res.isError) {
+      showConnectionError();
+      return;
+    }
+
+    const content = res.content?.[0]?.text || res.text || '';
+    const html = marked.parse(content);
+    contentScroll.innerHTML = '<div class="markdown">' + html + '</div>';
+  } catch (err) {
+    console.error('File read error:', err);
+    contentScroll.innerHTML = `
+      <div style="padding: 32px;">
+        <div class="error-banner">
+          <div class="error-banner-title">Could not read file</div>
+          <div style="margin-top: 8px;">${err.message}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Initialize on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDashboard);
+} else {
+  initDashboard();
+}
+</script>
+
+</body>
+</html>

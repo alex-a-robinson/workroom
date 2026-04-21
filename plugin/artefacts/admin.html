@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workroom — Team overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #F5F1EA;
+      --ink-dim: #A8A29A;
+      --ink-faint: #5F5B54;
+      --ink-whisper: #2A2825;
+      --ground: #0A0A0A;
+      --ground-raised: #131211;
+      --ground-sunken: #060605;
+      --accent: #E8623D;
+      --accent-ink: #0A0A0A;
+      --accent-glow: rgba(232, 98, 61, 0.18);
+      --accent-dim: #A84426;
+      --ok: #7EA876;
+      --warn: #D4A24E;
+      --bad: #B8554A;
+      --f-display: "Instrument Serif", "Times New Roman", serif;
+      --f-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --f-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --radius-sm: 4px;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --border: 1px solid var(--ink-whisper);
+      --gutter: 32px;
+      --maxw: 1280px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="light"] {
+      --ink: #17140F;
+      --ink-dim: #5F5B54;
+      --ink-faint: #8C8880;
+      --ink-whisper: #E3DED4;
+      --ground: #F5F1EA;
+      --ground-raised: #FBF8F2;
+      --ground-sunken: #EEE8DC;
+      --accent-ink: #F5F1EA;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--ground);
+      color: var(--ink);
+      font-family: var(--f-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      font-feature-settings: "ss01", "ss02", "cv01";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+
+    .topbar {
+      padding: 24px var(--gutter);
+      border-bottom: var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: color-mix(in srgb, var(--ground) 90%, transparent);
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-inner { max-width: var(--maxw); margin: 0 auto; }
+
+    .topbar h1 {
+      font-family: var(--f-display);
+      font-size: clamp(24px, 3vw, 32px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .main-content {
+      padding: 48px var(--gutter);
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    @media (max-width: 960px) {
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .kpi-strip { grid-template-columns: 1fr; }
+    }
+
+    .kpi-tile {
+      background: var(--ground-raised);
+      border: 1px solid var(--ink-whisper);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .kpi-value {
+      font-family: var(--f-display);
+      font-size: 48px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .kpi-label {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .invite-card {
+      background: var(--ground-raised);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .invite-card h2 {
+      font-family: var(--f-display);
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .invite-card p {
+      color: var(--ink-dim);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .invite-section {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .invite-input {
+      background: var(--ground-sunken);
+      border: 1px solid var(--ink-whisper);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--ink);
+      font-family: var(--f-mono);
+      font-size: 14px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .btn-copy {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: box-shadow 200ms var(--ease-out);
+      font-family: var(--f-sans);
+    }
+
+    .btn-copy:hover {
+      box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -10px var(--accent-glow);
+    }
+
+    .invite-disclaimer {
+      font-size: 12px;
+      color: var(--ink-faint);
+    }
+
+    .section-title {
+      font-family: var(--f-display);
+      font-size: 22px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+    }
+
+    .team-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--ground-raised);
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .team-table thead tr {
+      border-bottom: var(--border);
+      background: color-mix(in srgb, var(--ground-raised) 80%, var(--accent) 5%);
+    }
+
+    .team-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-family: var(--f-mono);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .team-table td {
+      padding: 16px;
+      border-bottom: var(--border);
+      font-size: 14px;
+    }
+
+    .team-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .team-table tr.active {
+      background: color-mix(in srgb, var(--ground-raised) 90%, var(--accent) 8%);
+    }
+
+    .team-row-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .team-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--accent-ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .team-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .team-name {
+      font-weight: 500;
+    }
+
+    .team-role {
+      font-size: 12px;
+      color: var(--ink-dim);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: var(--ground-sunken);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 300ms var(--ease-out);
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: var(--ink-dim);
+      white-space: nowrap;
+    }
+
+    .activity-feed {
+      background: var(--ground-raised);
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+
+    .activity-item {
+      padding: 12px 0;
+      border-bottom: var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 13px;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-time {
+      color: var(--ink-dim);
+      font-family: var(--f-mono);
+      font-size: 11px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .activity-desc {
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .activity-empty {
+      text-align: center;
+      padding: 28px 20px;
+      color: var(--ink-faint);
+      font-size: 13px;
+    }
+
+    .preview-watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      font-size: 11px;
+      font-weight: 500;
+      font-family: var(--f-mono);
+      z-index: 5;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <h1>Team overview</h1>
+  </div>
+</div>
+
+<div class="main-content">
+
+  <!-- KPI Tiles -->
+  <div class="kpi-strip">
+    <div class="kpi-tile">
+      <div class="kpi-value">1/1</div>
+      <div class="kpi-label">Team members onboarded</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value">100%</div>
+      <div class="kpi-label">Onboarded</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value">7</div>
+      <div class="kpi-label">Routines completed this week</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value">14 min</div>
+      <div class="kpi-label">Avg time-to-first-win</div>
+    </div>
+  </div>
+
+  <!-- Invite CTA Card -->
+  <div class="invite-card">
+    <div>
+      <h2>Bring your team in</h2>
+      <p>Each invite code installs the Workroom plugin for a teammate and links them to your admin view.</p>
+    </div>
+    <div class="invite-section">
+      <input type="text" class="invite-input" id="inviteCode" value="WR-A7K2-9Q3F-2026" readonly>
+      <button class="btn-copy" id="copyBtn">Copy code</button>
+    </div>
+    <div class="invite-disclaimer">This is a preview code — real invite distribution coming soon.</div>
+  </div>
+
+  <!-- Team Progress Section -->
+  <div>
+    <h3 class="section-title">Team progress</h3>
+    <table class="team-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Progress</th>
+          <th>Last active</th>
+          <th>Routines done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="active">
+          <td>
+            <div class="team-row-name">
+              <div class="team-avatar">A</div>
+              <div class="team-info">
+                <div class="team-name">You (Alex)</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="team-role">Founder</div>
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div class="progress-bar-container" style="flex: 1; min-width: 80px;">
+                <div class="progress-bar" style="width: 16.7%;"></div>
+              </div>
+              <span class="progress-text">2/12</span>
+            </div>
+          </td>
+          <td>
+            <div class="progress-text">Today</div>
+          </td>
+          <td>
+            <div class="progress-text">7</div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 28px 16px; color: var(--ink-faint); font-size: 13px;">
+            Invite teammates to see their progress here
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Activity Feed -->
+  <div style="margin-top: 48px;">
+    <h3 class="section-title">Recent activity</h3>
+    <div class="activity-feed">
+      <div class="activity-item">
+        <div class="activity-time">12m ago</div>
+        <div class="activity-desc">You completed <strong>Weekly pipeline review</strong> — 12 min</div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-time">3h ago</div>
+        <div class="activity-desc">You started <strong>Follow-up drafts</strong> routine</div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-time">Yesterday</div>
+        <div class="activity-desc">You completed <strong>Inbox triage</strong> — 8 min</div>
+      </div>
+      <div style="text-align: center; padding: 20px 16px; color: var(--ink-faint); font-size: 13px; margin-top: 12px;">
+        Invite teammates to see their activity here
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Generate a random invite code on load
+function generateInviteCode() {
+  const seg1 = 'WR';
+  const seg2 = Math.random().toString(36).substring(2, 6).toUpperCase().padEnd(4, 'A').slice(0, 4);
+  const seg3 = Math.random().toString(36).substring(2, 6).toUpperCase().padEnd(4, 'A').slice(0, 4);
+  const seg4 = new Date().getFullYear().toString();
+  return `${seg1}-${seg2}-${seg3}-${seg4}`;
+}
+
+document.getElementById('inviteCode').value = generateInviteCode();
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const code = document.getElementById('inviteCode').value;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+});
+
+// Add preview watermark since this is placeholder data
+const watermark = document.createElement('div');
+watermark.className = 'preview-watermark';
+watermark.textContent = 'Preview: Placeholder Data';
+document.body.appendChild(watermark);
+</script>
+
+</body>
+</html>

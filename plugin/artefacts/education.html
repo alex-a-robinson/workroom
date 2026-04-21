@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workroom — Your learning path</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #F5F1EA;
+      --ink-dim: #A8A29A;
+      --ink-faint: #5F5B54;
+      --ink-whisper: #2A2825;
+      --ground: #0A0A0A;
+      --ground-raised: #131211;
+      --ground-sunken: #060605;
+      --accent: #E8623D;
+      --accent-ink: #0A0A0A;
+      --accent-glow: rgba(232, 98, 61, 0.18);
+      --accent-dim: #A84426;
+      --ok: #7EA876;
+      --warn: #D4A24E;
+      --bad: #B8554A;
+      --f-display: "Instrument Serif", "Times New Roman", serif;
+      --f-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --f-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      --radius-sm: 4px;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --border: 1px solid var(--ink-whisper);
+      --gutter: 32px;
+      --maxw: 1280px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    [data-theme="light"] {
+      --ink: #17140F;
+      --ink-dim: #5F5B54;
+      --ink-faint: #8C8880;
+      --ink-whisper: #E3DED4;
+      --ground: #F5F1EA;
+      --ground-raised: #FBF8F2;
+      --ground-sunken: #EEE8DC;
+      --accent-ink: #F5F1EA;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--ground);
+      color: var(--ink);
+      font-family: var(--f-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      font-feature-settings: "ss01", "ss02", "cv01";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
+
+    .topbar {
+      padding: 24px var(--gutter);
+      border-bottom: var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: color-mix(in srgb, var(--ground) 90%, transparent);
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-inner { max-width: var(--maxw); margin: 0 auto; }
+
+    .topbar h1 {
+      font-family: var(--f-display);
+      font-size: clamp(24px, 3vw, 32px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .progress-section {
+      padding: 48px var(--gutter);
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .progress-number {
+      font-family: var(--f-display);
+      font-size: clamp(48px, 8vw, 72px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .progress-label {
+      font-family: var(--f-mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .main-content {
+      padding: 0 var(--gutter) 64px;
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    section {
+      margin-bottom: 96px;
+    }
+
+    .section-title {
+      font-family: var(--f-display);
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--ground-raised);
+      border: 1px solid var(--ink-whisper);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+    }
+
+    .in-progress-card {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-family: var(--f-display);
+      font-size: 24px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      color: var(--ink-dim);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .connector-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .pill {
+      background: var(--ground-sunken);
+      border: 1px solid var(--ink-whisper);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: var(--f-mono);
+      color: var(--ink-dim);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-ink);
+      box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -10px var(--accent-glow);
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--f-sans);
+      cursor: pointer;
+      transition: box-shadow 200ms var(--ease-out), transform 140ms var(--ease-out);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 0 1px var(--accent), 0 14px 40px -10px var(--accent-glow), 0 0 60px -10px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    .btn-ghost {
+      color: var(--ink);
+      border: 1px solid var(--ink-whisper);
+      background: transparent;
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--f-sans);
+      cursor: pointer;
+      transition: border-color 180ms, background 180ms;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--ink-faint);
+      background: var(--ground-raised);
+    }
+
+    .routines-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    @media (max-width: 960px) {
+      .routines-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .routines-grid {
+        grid-template-columns: 1fr;
+      }
+      .progress-section {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      section {
+        margin-bottom: 64px;
+      }
+    }
+
+    .routine-card {
+      background: var(--ground-raised);
+      border: 1px solid var(--ink-whisper);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 200ms var(--ease-out);
+      position: relative;
+    }
+
+    .routine-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -10px var(--accent-glow);
+    }
+
+    .routine-card.completed {
+      opacity: 0.6;
+    }
+
+    .routine-card.locked {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .routine-card.locked::after {
+      content: "";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 20px;
+      height: 20px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235F5B54' stroke-width='1.5'%3E%3Crect x='5' y='11' width='14' height='8' rx='1'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E") no-repeat center;
+      background-size: contain;
+    }
+
+    .routine-title {
+      font-family: var(--f-display);
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    .routine-desc {
+      font-size: 13px;
+      color: var(--ink-dim);
+      line-height: 1.5;
+    }
+
+    .routine-connectors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .routine-connector {
+      background: var(--ground-sunken);
+      border: 1px solid var(--ink-whisper);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-family: var(--f-mono);
+      color: var(--ink-faint);
+    }
+
+    .routine-btn {
+      align-self: flex-start;
+      padding: 10px 16px;
+      font-size: 13px;
+      margin-top: auto;
+    }
+
+    .empty-state {
+      background: var(--ground-raised);
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      padding: 48px 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .empty-title {
+      font-family: var(--f-display);
+      font-size: 24px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .empty-desc {
+      color: var(--ink-dim);
+      font-size: 15px;
+      line-height: 1.5;
+      max-width: 48ch;
+    }
+
+    .preview-watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      font-size: 11px;
+      font-weight: 500;
+      font-family: var(--f-mono);
+      z-index: 5;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <h1>Your Workroom learning path</h1>
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="container" style="width: 100%; display: flex; align-items: center; gap: 32px; padding: 0 var(--gutter);">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div class="progress-number" id="completedCount">0</div>
+      <div class="progress-label">routines completed</div>
+    </div>
+    <div id="progressMsg" style="font-size: 18px; color: var(--ink-dim);">Loading progress…</div>
+  </div>
+</div>
+
+<div class="main-content">
+
+  <!-- In Progress Section -->
+  <section id="inProgressSection" style="display: none;">
+    <h2 class="section-title">In progress</h2>
+    <div id="inProgressCard"></div>
+  </section>
+
+  <!-- Available Next Section -->
+  <section id="availableSection" style="display: none;">
+    <h2 class="section-title">Available next</h2>
+    <div id="availableGrid" class="routines-grid"></div>
+  </section>
+
+  <!-- What's Coming Section -->
+  <section id="comingSection" style="display: none;">
+    <h2 class="section-title">What's coming</h2>
+    <div id="comingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+    </div>
+  </section>
+
+  <!-- Empty State -->
+  <div id="emptyState" style="display: none;">
+    <div class="empty-state">
+      <div class="empty-title">Complete onboarding to unlock your learning path</div>
+      <div class="empty-desc">Your learning path is customized to your role and connected tools. Run the Workroom onboarding to get started.</div>
+      <button class="btn-primary" id="runOnboardingBtn" style="margin-top: 12px;">Run onboarding</button>
+      <div style="margin-top: 16px; font-size: 13px; color: var(--ink-faint);">
+        Or type <code style="font-family: var(--f-mono); background: var(--ground-sunken); padding: 3px 6px; border-radius: var(--radius-sm);">/workroom-onboarding</code> in the chat
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(async () => {
+  try {
+    // Try to read progress from filesystem MCP
+    if (window.cowork?.callMcpTool) {
+      const res = await window.cowork.callMcpTool('mcp__workroom-fs__read_text_file', {
+        path: '/.workroom/progress.json'
+      });
+
+      if (!res.isError && res.content?.[0]?.text) {
+        const progress = JSON.parse(res.content[0].text);
+        renderEducation(progress);
+        return;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to read progress file:', err);
+  }
+
+  // If no real progress file, show empty state or preview
+  if (typeof window !== 'undefined' && !window.cowork?.callMcpTool) {
+    // Preview mode: load fixture
+    renderPreview();
+  } else {
+    // No tool available or no progress file
+    showEmptyState();
+  }
+})();
+
+function renderEducation(progress) {
+  const { completed = [], inProgress = null, allRoutines = [] } = progress;
+
+  const total = allRoutines.length;
+  const completedCount = completed.length;
+
+  // Update progress header
+  document.getElementById('completedCount').textContent = completedCount;
+  document.getElementById('progressMsg').textContent = `of ${total} routines completed`;
+
+  if (!allRoutines.length) {
+    showEmptyState();
+    return;
+  }
+
+  // In-progress routine
+  if (inProgress) {
+    const routine = allRoutines.find(r => r.id === inProgress);
+    if (routine) {
+      const card = document.createElement('div');
+      card.className = 'card in-progress-card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-title">${routine.title}</div>
+          <div class="card-desc">${routine.description}</div>
+        </div>
+        <div class="connector-pills">
+          ${(routine.requires || []).map(c => `<div class="pill">${c}</div>`).join('')}
+        </div>
+        <button class="btn-primary" style="align-self: flex-start;">Resume</button>
+      `;
+      document.getElementById('inProgressCard').innerHTML = '';
+      document.getElementById('inProgressCard').appendChild(card);
+      document.getElementById('inProgressSection').style.display = 'block';
+    }
+  }
+
+  // Available next (first 3 not completed, not in progress)
+  const available = allRoutines.filter(r => !completed.includes(r.id) && r.id !== inProgress);
+  if (available.length > 0) {
+    const grid = document.getElementById('availableGrid');
+    grid.innerHTML = '';
+    available.slice(0, 3).forEach(routine => {
+      const card = createRoutineCard(routine, false);
+      grid.appendChild(card);
+    });
+    document.getElementById('availableSection').style.display = 'block';
+  }
+
+  // What's coming (remaining routines)
+  const remaining = available.slice(3);
+  if (remaining.length > 0) {
+    const comingGrid = document.getElementById('comingGrid');
+    comingGrid.innerHTML = '';
+    remaining.slice(0, 4).forEach(routine => {
+      const card = document.createElement('div');
+      card.className = 'routine-card';
+      card.innerHTML = `
+        <div class="routine-title">${routine.title}</div>
+        <div class="routine-desc">${routine.description}</div>
+      `;
+      comingGrid.appendChild(card);
+    });
+    document.getElementById('comingSection').style.display = 'block';
+  }
+}
+
+function createRoutineCard(routine, isLocked) {
+  const card = document.createElement('div');
+  card.className = `routine-card ${isLocked ? 'locked' : ''}`;
+  if (isLocked) card.disabled = true;
+
+  card.innerHTML = `
+    <div class="routine-title">${routine.title}</div>
+    <div class="routine-desc">${routine.description}</div>
+    <div class="routine-connectors">
+      ${(routine.requires || []).map(c => `<div class="routine-connector">${c}</div>`).join('')}
+    </div>
+    <button class="btn-primary routine-btn" ${isLocked ? 'disabled' : ''}>
+      ${isLocked ? 'Locked' : 'Start'}
+    </button>
+  `;
+  return card;
+}
+
+function renderPreview() {
+  const mockProgress = {
+    completed: ['inbox-triage', 'pipeline-review'],
+    inProgress: 'weekly-retro',
+    allRoutines: [
+      {
+        id: 'inbox-triage',
+        title: 'Inbox triage',
+        description: 'Set up automated email sorting and priority flags',
+        requires: ['gmail']
+      },
+      {
+        id: 'pipeline-review',
+        title: 'Pipeline review',
+        description: 'Weekly CRM updates and deal hygiene',
+        requires: ['hubspot']
+      },
+      {
+        id: 'weekly-retro',
+        title: 'Weekly retrospective',
+        description: 'Summarize wins, blockers, and next week priorities',
+        requires: []
+      },
+      {
+        id: 'meeting-prep',
+        title: 'Meeting prep',
+        description: 'Auto-generate agendas and talking points',
+        requires: ['calendar', 'email']
+      },
+      {
+        id: 'follow-up-drafts',
+        title: 'Follow-up drafts',
+        description: 'Generate personalized post-meeting follow-ups',
+        requires: ['gmail', 'calendar']
+      },
+      {
+        id: 'crm-enrichment',
+        title: 'CRM enrichment',
+        description: 'Automated company research and contact scoring',
+        requires: ['hubspot']
+      }
+    ]
+  };
+
+  renderEducation(mockProgress);
+
+  // Add preview watermark
+  const watermark = document.createElement('div');
+  watermark.className = 'preview-watermark';
+  watermark.textContent = 'Preview Mode';
+  document.body.appendChild(watermark);
+}
+
+function showEmptyState() {
+  document.getElementById('emptyState').style.display = 'block';
+  document.getElementById('runOnboardingBtn').addEventListener('click', () => {
+    if (window.cowork?.runSkill) {
+      window.cowork.runSkill('workroom-onboarding');
+    } else {
+      alert('Onboarding skill not available. Type /workroom-onboarding in chat.');
+    }
+  });
+}
+</script>
+
+</body>
+</html>

@@ -4,6 +4,20 @@ The plugin itself. Sits inside a one-plugin marketplace at the repo root.
 
 For the full picture — install flow, versioning conventions, what's loaded — see the top-level `README.md`.
 
+## Workspace directory
+
+The plugin talks to a single user-picked root directory — your Workroom knowledge base. During onboarding, you'll be prompted to choose a directory (or create one from the provided scaffold).
+
+To update the root directory later, run:
+
+```bash
+${CLAUDE_PLUGIN_ROOT}/mcp/set-workroom-root.sh /path/to/your/workroom
+```
+
+This path is read at server launch time by the bundled filesystem MCP. If the file-viewer artefact shows errors or an empty tree, check that the path exists and is correct.
+
+For debugging, see `mcp/README.md`.
+
 ## Skills
 
 | Skill | Purpose |

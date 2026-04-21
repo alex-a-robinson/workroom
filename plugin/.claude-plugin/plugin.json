@@ -1,10 +1,10 @@
 {
   "name": "workroom",
-  "version": "0.3.0",
-  "description": "Workroom — the master plugin. Ships the onboarding artefact, an Obsidian-style knowledge-base file viewer, the Pip framework, a starter workspace scaffold, and placeholder hooks for git-sync and Pip safety. Invoke workroom-help to see what's inside.",
+  "version": "0.4.0",
+  "description": "Workroom — the master plugin. Three-step guided onboarding, live MCP-backed knowledge-base dashboard, education + admin artefacts, the Pip coaching framework, starter templates, and a bundled filesystem MCP. Invoke workroom-help to see what's inside.",
   "author": {
     "name": "Workroom",
-    "url": "https://workroom.com"
+    "url": "https://useworkroom.com"
   },
   "homepage": "https://github.com/alex-a-robinson/workroom"
 }
