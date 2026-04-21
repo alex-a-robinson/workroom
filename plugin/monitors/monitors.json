@@ -1,0 +1,12 @@
+{
+  "monitors": [
+    {
+      "name": "heartbeat",
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/heartbeat.sh"
+    },
+    {
+      "name": "signal-watch",
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/signal-watch.sh"
+    }
+  ]
+}

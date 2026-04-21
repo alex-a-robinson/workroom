@@ -1,0 +1,8 @@
+{
+  "name": "workroom-monitor-test",
+  "version": "0.2.0",
+  "description": "Minimal probe: validates that plugin monitors deliver stdout lines to Claude as chat notifications. Part of the Workroom platform-capability probes. Ships with a monitor-status skill for in-session diagnosis.",
+  "author": {
+    "name": "Workroom"
+  }
+}
