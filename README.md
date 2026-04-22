@@ -55,13 +55,19 @@ In a fresh chat, ask Claude to run the `workroom-help` skill. That prints what's
 
 ## Versioning + updates
 
-Version lives in `plugin/.claude-plugin/plugin.json` and the marketplace entry. Both must stay in sync. Every release bumps:
+Cowork auto-update is **commit-SHA-based**: every push to `main` is a publish. A tagged release is optional polish — it adds a human-readable permalink + changelog page, but is not required for users to see the update.
 
-1. `plugin/.claude-plugin/plugin.json → version`
-2. `.claude-plugin/marketplace.json → plugins[0].version`
-3. `CHANGELOG.md` — what changed, when, who / why
+The `version` field lives in exactly one place: `.claude-plugin/marketplace.json → plugins[0].version`. `plugin/.claude-plugin/plugin.json` has **no** version field — for relative-path plugin sources (`"source": "./plugin"`), Anthropic's docs warn that a plugin-manifest version silently shadows the marketplace value, so we omit it and let `validate-manifest.sh` fail the build if it ever reappears.
 
-Cowork refreshes marketplace metadata on a cadence and shows users a notification to run `/reload-plugins` when a new version is ready. Orphaned cached versions are cleaned after 7 days. Trust is identity-based — updates can change MCPs and hooks silently, so the `workroom-info` skill surfaces what's currently loaded as a safety net.
+To cut a release, drop entries under `## [Unreleased]` in `CHANGELOG.md` as you work, then:
+
+```bash
+scripts/release.sh patch   # or minor / major / 0.5.0
+```
+
+That validates, bumps `marketplace.json`, rotates the CHANGELOG to a new dated release block, commits, tags `vX.Y.Z`, and pushes branch + tag. A tag push triggers `.github/workflows/release.yml`, which creates a GitHub Release with the CHANGELOG section as the body. See [`PUBLISHING.md`](./PUBLISHING.md) for the full command reference.
+
+Users pick up updates via `/plugin marketplace update` followed by `/plugin` to install/update. Inside a session, the `workroom-info` skill shows the loaded version + commit SHA as a safety net, because plugin updates can silently change MCPs and hooks.
 
 ## Provenance
 

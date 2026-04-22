@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-# Push current HEAD to origin. Intended for use by the sandboxed Claude in Cowork
-# so it can ship commits without any manual token juggling — the credential
-# helper wired via `git config credential.helper` picks up the token from
-# ../../../.secrets/git-credentials automatically.
+# Push current HEAD (and all local tags) to origin. Intended for use by the
+# sandboxed Claude in Cowork so it can ship commits + release tags without any
+# manual token juggling — the credential helper wired via `git config
+# credential.helper` picks up the token from ../../../.secrets/git-credentials
+# automatically.
+#
+# Pushes tags in a separate step so a tagless commit push still works, and so
+# tag-push failures (e.g. clobber refusals) are visible.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -25,6 +29,16 @@ if ! git push origin HEAD; then
   echo "  - remote url:        $(git remote get-url origin 2>/dev/null || echo '<unset>')" >&2
   echo "  - token file exists: $(test -r /Users/alex/Documents/Claude/Projects/Workroom/.secrets/git-credentials && echo yes || echo NO)" >&2
   exit 1
+fi
+
+# Push any new tags too. --tags pushes all local tags not present on the remote;
+# safe because bump-version.sh refuses to create a tag that already exists.
+if git tag --list | grep -q .; then
+  echo "pushing tags to origin..."
+  if ! git push origin --tags; then
+    echo "warning: git push --tags failed (branch push succeeded). tags may already exist remotely." >&2
+    exit 1
+  fi
 fi
 
 echo "done."

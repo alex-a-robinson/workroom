@@ -1,0 +1,63 @@
+name: release
+
+# Fires when a version tag (vX.Y.Z) is pushed. Publishes a GitHub Release
+# seeded from CHANGELOG.md so users can follow along with what's new. The
+# marketplace itself is git-SHA-driven — Cowork picks up the latest commit
+# regardless of whether a release exists — but a tagged release gives a
+# permalink + changelog surface for humans.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need tag history to extract the changelog block
+
+      - name: install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: validate manifests
+        run: bash scripts/validate-manifest.sh
+
+      - name: extract version + changelog
+        id: extract
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          # Cross-check tag against the marketplace version (authoritative source).
+          market_ver=$(jq -r '.plugins[0].version' .claude-plugin/marketplace.json)
+          if [ "$market_ver" != "$version" ]; then
+            echo "tag $tag does not match marketplace.json version $market_ver" >&2
+            exit 1
+          fi
+
+          # Pull the section of CHANGELOG.md for this version
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]"      { capture=1; next }
+            capture && /^## \[/         { exit }
+            capture                     { print }
+          ' CHANGELOG.md > release-notes.md
+
+          if [ ! -s release-notes.md ]; then
+            echo "no changelog section for v$version" >&2
+            exit 1
+          fi
+
+      - name: create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: v${{ steps.extract.outputs.version }}
+          body_path: release-notes.md
+          draft: false
+          prerelease: false

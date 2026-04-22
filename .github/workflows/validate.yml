@@ -1,0 +1,22 @@
+name: validate
+
+# Runs on every push + PR. Fails the build if the manifests are malformed,
+# plugin.json has a sneaky version field, or the source path doesn't resolve.
+# Cheap, fast, purely a safety net so a bad commit doesn't ship to the
+# marketplace silently.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: validate manifests
+        run: bash scripts/validate-manifest.sh

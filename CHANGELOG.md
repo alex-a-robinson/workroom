@@ -2,6 +2,26 @@
 
 All notable changes to the `workroom` plugin. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows SemVer.
 
+## [Unreleased]
+
+Publishing infrastructure: scripts + CI so cutting a release is `scripts/release.sh patch`, and a tag push auto-publishes a GitHub Release.
+
+### Added
+
+- **`scripts/validate-manifest.sh`** — sanity check both manifests before push. Flags the relative-path hazard where `plugin.json` carries a `version` field (per Anthropic's docs, the plugin manifest silently wins and shadows the marketplace value). Runs in CI on every push and PR.
+- **`scripts/bump-version.sh`** — atomic version bump + CHANGELOG rotation + commit + annotated tag. Single source of truth is `marketplace.json → plugins[0].version`. Refuses an empty `[Unreleased]`, unstaged drift, or a tag clobber.
+- **`scripts/release.sh`** — the usual one. validate → bump → push (branch + tags together).
+- **`scripts/push.sh`** — now pushes tags alongside the branch.
+- **`.github/workflows/validate.yml`** — runs `validate-manifest.sh` on every push + PR.
+- **`.github/workflows/release.yml`** — on `v*.*.*` tag push, cross-checks the tag against `marketplace.json`, extracts the CHANGELOG block for that version, creates a GitHub Release with it as the body.
+- **`PUBLISHING.md`** — quick cheatsheet for shipping a release.
+
+### Changed
+
+- **`plugin/.claude-plugin/plugin.json`** — `version` field removed. For relative-path plugin sources (`"source": "./plugin"`), Anthropic's docs warn that a version in the plugin manifest silently shadows the marketplace value, so version now lives only in `marketplace.json`. `validate-manifest.sh` fails the build if the field ever reappears.
+- **`plugin/skills/workroom-info/SKILL.md`** — reads version from `marketplace.json` instead of `plugin.json`; also surfaces the commit SHA and flags the plugin-manifest hazard if a stray `version` field reappears.
+- **`README.md`** — "Versioning + updates" rewritten to reflect the single-source-of-truth model and pointer to `PUBLISHING.md`.
+
 ## [0.4.1] — 2026-04-21
 
 Patch release: the v0.4.0 MCP wrapper never started because of an unbound-var crash. This fixes it.
