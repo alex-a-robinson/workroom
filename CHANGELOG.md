@@ -4,6 +4,8 @@ All notable changes to the `workroom` plugin. Format loosely follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.4.2] — 2026-04-22
+
 Publishing infrastructure: scripts + CI so cutting a release is `scripts/release.sh patch`, and a tag push auto-publishes a GitHub Release.
 
 ### Added
